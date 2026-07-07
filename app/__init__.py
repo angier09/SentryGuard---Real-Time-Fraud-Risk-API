@@ -1,0 +1,1 @@
+"""SentryGuard FastAPI application package."""
