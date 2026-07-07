@@ -44,6 +44,8 @@ flowchart TD
     L --> P["POST /v1/batch-predict"]
     L --> Q["GET /metrics"]
 ```
+## Output
+<img width="1470" height="956" alt="Screenshot 2026-07-06 at 10 34 35 PM" src="https://github.com/user-attachments/assets/5b537635-a4d9-43fc-982f-1a0da587c6f5" />
 
 ## Workflow
 
