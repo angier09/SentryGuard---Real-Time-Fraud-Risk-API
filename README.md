@@ -285,8 +285,6 @@ Recommended deployment approaches:
 
 ## Future Improvements
 
-- Add calibrated probabilities with `CalibratedClassifierCV`.
-- Add SHAP-based explanations for XGBoost responses.
 - Add drift monitoring for feature distributions and fraud rate.
 - Add model registry support.
 - Add request authentication for public deployment.
