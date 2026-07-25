@@ -47,6 +47,16 @@ flowchart TD
 ## Output
 <img width="1470" height="956" alt="Screenshot 2026-07-06 at 10 34 35 PM" src="https://github.com/user-attachments/assets/5b537635-a4d9-43fc-982f-1a0da587c6f5" />
 
+## HTML DEMO
+Build a standalone, user-friendly demo frontend (single static HTML page served by FastAPI at GET /demo,
+
+<img width="1327" height="832" alt="Screenshot 2026-07-25 at 7 08 53 PM" src="https://github.com/user-attachments/assets/bf7f1947-f537-40c7-a3a9-6a0353cbb6b5" />
+
+<img width="1256" height="823" alt="Screenshot 2026-07-25 at 7 09 37 PM" src="https://github.com/user-attachments/assets/d8e72bbe-a7fa-4d87-b1a6-d0b2fafe1c1b" />
+
+<img width="1270" height="830" alt="Screenshot 2026-07-25 at 7 09 19 PM" src="https://github.com/user-attachments/assets/583e1ed5-669d-45eb-9366-be5528192b70" />
+
+
 ## Workflow
 
 1. Download the Kaggle dataset to `data/raw/creditcard.csv`.
