@@ -45,6 +45,24 @@ def test_health_returns_healthy_when_model_is_loaded(
     assert response.json()["model_loaded"] is True
 
 
+def test_demo_page_is_served(tmp_path: Path) -> None:
+    app = create_app(
+        Settings(
+            model_path=tmp_path / "missing.joblib",
+            threshold_path=tmp_path / "missing-threshold.json",
+            metrics_path=tmp_path / "missing-metrics.json",
+        )
+    )
+
+    with TestClient(app) as client:
+        response = client.get("/demo")
+
+    assert response.status_code == 200
+    assert "SentryGuard" in response.text
+    assert "/v1/predict" in response.text
+    assert "Everyday coffee purchase" in response.text
+
+
 def test_model_info_returns_metadata(
     risk_service: RiskService,
     tmp_path: Path,

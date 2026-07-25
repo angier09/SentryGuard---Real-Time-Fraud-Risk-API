@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.routes import router
@@ -17,6 +19,7 @@ from app.models.model_loader import (
 from app.services.risk_service import RiskService
 
 logger = get_logger(__name__)
+DEMO_PAGE_PATH = Path(__file__).parent / "static" / "demo.html"
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -44,6 +47,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         description="Real-time fraud risk scoring API.",
         lifespan=lifespan,
     )
+
+    @fastapi_app.get("/demo", response_class=HTMLResponse, include_in_schema=False)
+    def demo() -> HTMLResponse:
+        return HTMLResponse(DEMO_PAGE_PATH.read_text(encoding="utf-8"))
+
     fastapi_app.include_router(router)
     Instrumentator().instrument(fastapi_app).expose(fastapi_app)
     return fastapi_app

@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SentryGuard Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f8fb;
+      --panel: #ffffff;
+      --ink: #132033;
+      --muted: #66768a;
+      --line: #d8e1ea;
+      --navy: #14243a;
+      --accent: #12b5a5;
+      --accent-dark: #0d8178;
+      --low: #138a52;
+      --medium: #b7791f;
+      --high: #c2413d;
+      --shadow: 0 18px 45px rgba(20, 36, 58, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .hero {
+      background: var(--navy);
+      color: #fff;
+      padding: 38px 24px 34px;
+    }
+
+    .hero-inner,
+    .shell {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: var(--navy);
+      font-weight: 900;
+    }
+
+    h1 {
+      max-width: 820px;
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0;
+      color: #d8e5f0;
+      font-size: 1.08rem;
+      line-height: 1.6;
+    }
+
+    .shell {
+      padding: 28px 24px 48px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel,
+    .sample-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      letter-spacing: 0;
+    }
+
+    .samples {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .sample-card {
+      cursor: pointer;
+      padding: 16px;
+      text-align: left;
+      transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .sample-card:hover,
+    .sample-card.active {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 18px 38px rgba(18, 181, 165, 0.14);
+    }
+
+    .sample-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .sample-card span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 650;
+    }
+
+    input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 9px 11px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    input:focus {
+      outline: 2px solid rgba(18, 181, 165, 0.22);
+      border-color: var(--accent);
+    }
+
+    details {
+      margin-top: 18px;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+
+    summary {
+      cursor: pointer;
+      color: var(--navy);
+      font-weight: 750;
+    }
+
+    .advanced-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .primary {
+      border: 0;
+      border-radius: 7px;
+      min-height: 44px;
+      padding: 0 18px;
+      background: var(--accent);
+      color: #062925;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .primary:hover {
+      background: #19c9b8;
+    }
+
+    .status-text {
+      min-height: 22px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .result-panel {
+      position: sticky;
+      top: 18px;
+    }
+
+    .probability {
+      margin: 20px 0 16px;
+    }
+
+    .probability-value {
+      font-size: 3rem;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .bar {
+      overflow: hidden;
+      height: 13px;
+      margin-top: 10px;
+      border-radius: 999px;
+      background: #e5ebf1;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+      transition: width 520ms ease, background 220ms ease;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 0 12px;
+      color: #fff;
+      font-size: 0.86rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .decision {
+      display: grid;
+      gap: 6px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #f2f6f9;
+      border: 1px solid var(--line);
+    }
+
+    .decision small,
+    .factors small {
+      color: var(--muted);
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .decision strong {
+      font-size: 1.25rem;
+      text-transform: capitalize;
+    }
+
+    .factors {
+      display: none;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .factor-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .factor {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .error {
+      display: none;
+      margin-top: 16px;
+      padding: 13px;
+      border-radius: 8px;
+      color: #7f1d1d;
+      background: #fff1f1;
+      border: 1px solid #ffd0d0;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-panel {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero,
+      .shell {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .samples,
+      .form-grid,
+      .advanced-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .probability-value {
+        font-size: 2.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="brand"><span class="mark">SG</span><span>SentryGuard</span></div>
+      <h1>Real-time fraud risk scoring for credit card transactions.</h1>
+      <p>SentryGuard scores live transactions with a trained XGBoost model, converts probability into an operational decision, and keeps raw model features available for deeper review.</p>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div class="grid">
+      <section class="panel">
+        <h2 class="section-title">Sample Transactions</h2>
+        <div class="samples" id="samples"></div>
+
+        <h2 class="section-title">Transaction</h2>
+        <form id="transaction-form">
+          <div class="form-grid">
+            <label>Time
+              <input id="time" name="time" type="number" step="any" min="0" required>
+            </label>
+            <label>Amount
+              <input id="amount" name="amount" type="number" step="any" min="0" required>
+            </label>
+          </div>
+
+          <details>
+            <summary>Advanced model features</summary>
+            <div class="advanced-grid" id="advanced-fields"></div>
+          </details>
+
+          <div class="actions">
+            <button class="primary" type="submit">Score Transaction</button>
+            <span class="status-text" id="status-text"></span>
+          </div>
+        </form>
+      </section>
+
+      <aside class="panel result-panel">
+        <h2 class="section-title">Risk Result</h2>
+        <div class="probability">
+          <div class="probability-value" id="probability-value">--%</div>
+          <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+        </div>
+        <div class="badge-row">
+          <span class="badge" id="risk-badge">Waiting</span>
+        </div>
+        <div class="decision">
+          <small>Decision</small>
+          <strong id="decision-value">Select a sample</strong>
+        </div>
+        <div class="factors" id="factors">
+          <small>Top SHAP factors</small>
+          <div class="factor-list" id="factor-list"></div>
+        </div>
+        <div class="error" id="error"></div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const samples = [
+      {
+        name: "Everyday coffee purchase",
+        note: "Low amount, non-fraud row, model score near zero.",
+        payload: {"time":28642,"amount":5.9,"v1":-1.40023860692682,"v2":1.4935183398682,"v3":-0.637425489930017,"v4":-1.2763110477446,"v5":1.93540781476909,"v6":3.30558222234531,"v7":-0.349718055693948,"v8":1.5424981693914,"v9":-0.515861526792156,"v10":-0.105821843404856,"v11":-0.369919812738988,"v12":-0.0314805007392977,"v13":0.0341071586159348,"v14":0.625169877222043,"v15":1.01143368066771,"v16":0.629752666254172,"v17":-0.663970164147688,"v18":0.137104010036514,"v19":0.393743341426418,"v20":0.190005692756182,"v21":-0.25059679744683,"v22":-0.88412269574542,"v23":0.0089833635444996,"v24":0.98002286831021,"v25":-0.0202017489337165,"v26":0.0526122363751215,"v27":-0.129305415679058,"v28":-0.127052699258449}
+      },
+      {
+        name: "Late-night electronics buy",
+        note: "Non-fraud row with elevated model uncertainty.",
+        payload: {"time":123423,"amount":217.14,"v1":-3.53400624811879,"v2":-1.97654705410376,"v3":-0.923369953173685,"v4":0.446887725172444,"v5":0.662526082595696,"v6":-1.10839114996213,"v7":2.22875744509876,"v8":-1.33529526720283,"v9":1.55391851750756,"v10":0.0275546824458778,"v11":-0.409736108947474,"v12":-1.09869318576439,"v13":-1.36443269978492,"v14":-2.35514261633997,"v15":0.349138748832802,"v16":0.0159857756167419,"v17":0.870207625542608,"v18":0.252265875341249,"v19":0.841686309502016,"v20":-2.10832897948546,"v21":-0.912040640488241,"v22":0.0265251018751228,"v23":1.14013225720167,"v24":-0.0554214846906199,"v25":-0.260936305586153,"v26":-0.166373123114218,"v27":-1.16941616120539,"v28":1.24452853980606}
+      },
+      {
+        name: "Overseas cash advance",
+        note: "Fraud-labeled training row with a high model score.",
+        payload: {"time":93879,"amount":104.03,"v1":-12.8336314219519,"v2":7.50878980635543,"v3":-20.4919522106577,"v4":7.46577999198461,"v5":-11.5753037055975,"v6":-5.14099947650773,"v7":-14.0205637048257,"v8":8.33212047126021,"v9":-4.33771253089739,"v10":-15.5637913387301,"v11":7.61081978841573,"v12":-15.5923232225286,"v13":0.504789055226229,"v14":-13.2478885958622,"v15":-0.796526030140245,"v16":-10.3423283585648,"v17":-16.0445243414767,"v18":-5.8821359384126,"v19":1.57369789640089,"v20":-1.37892322363159,"v21":2.96684240389381,"v22":0.615344322057327,"v23":-0.766494757432984,"v24":0.431261005079751,"v25":-0.104974994617143,"v26":-0.0100913270781415,"v27":-2.4008113496639,"v28":-0.720556600051925}
+      },
+      {
+        name: "Large online order",
+        note: "High-value non-fraud row near the review threshold.",
+        payload: {"time":111638,"amount":798.49,"v1":-2.26146388291224,"v2":0.220504445790139,"v3":-3.55933748728871,"v4":1.52241466040365,"v5":-4.92052834798515,"v6":0.846770738166651,"v7":0.572076667602298,"v8":0.865552791910929,"v9":-1.0650281567897,"v10":-4.02994675205245,"v11":2.26133417099243,"v12":-2.15106886697903,"v13":0.19001308775914,"v14":-2.76882897247823,"v15":-0.896297019130249,"v16":-3.09174733287398,"v17":-5.97588617660747,"v18":-1.74797748594318,"v19":1.75088150592725,"v20":0.192832984716057,"v21":0.466701359764234,"v22":0.060958981655542,"v23":1.36756301346168,"v24":0.0013052969805765,"v25":-2.06868853631059,"v26":-1.26679968810312,"v27":1.01719094808608,"v28":0.116848975632894}
+      }
+    ];
+
+    const form = document.querySelector("#transaction-form");
+    const sampleWrap = document.querySelector("#samples");
+    const advancedFields = document.querySelector("#advanced-fields");
+    const statusText = document.querySelector("#status-text");
+    const probabilityValue = document.querySelector("#probability-value");
+    const barFill = document.querySelector("#bar-fill");
+    const riskBadge = document.querySelector("#risk-badge");
+    const decisionValue = document.querySelector("#decision-value");
+    const errorBox = document.querySelector("#error");
+    const factors = document.querySelector("#factors");
+    const factorList = document.querySelector("#factor-list");
+
+    function fieldNames() {
+      return ["time", "amount", ...Array.from({ length: 28 }, (_, index) => `v${index + 1}`)];
+    }
+
+    function renderInputs() {
+      for (let index = 1; index <= 28; index += 1) {
+        const label = document.createElement("label");
+        label.textContent = `V${index}`;
+        const input = document.createElement("input");
+        input.id = `v${index}`;
+        input.name = `v${index}`;
+        input.type = "number";
+        input.step = "any";
+        input.required = true;
+        label.appendChild(input);
+        advancedFields.appendChild(label);
+      }
+    }
+
+    function renderSamples() {
+      samples.forEach((sample, index) => {
+        const button = document.createElement("button");
+        button.className = "sample-card";
+        button.type = "button";
+        button.innerHTML = `<strong>${sample.name}</strong><span>${sample.note}</span>`;
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".sample-card").forEach((card) => card.classList.remove("active"));
+          button.classList.add("active");
+          fillForm(sample.payload);
+          scoreTransaction();
+        });
+        sampleWrap.appendChild(button);
+        if (index === 0) {
+          button.classList.add("active");
+        }
+      });
+    }
+
+    function fillForm(payload) {
+      fieldNames().forEach((field) => {
+        document.querySelector(`#${field}`).value = payload[field];
+      });
+    }
+
+    function collectPayload() {
+      const payload = { include_top_risk_factors: true };
+      fieldNames().forEach((field) => {
+        payload[field] = Number(document.querySelector(`#${field}`).value);
+      });
+      return payload;
+    }
+
+    function colorForRisk(risk) {
+      if (risk === "low") return "var(--low)";
+      if (risk === "medium") return "var(--medium)";
+      return "var(--high)";
+    }
+
+    function renderResult(result) {
+      const percent = Math.round(result.fraud_probability * 1000) / 10;
+      const color = colorForRisk(result.risk_level);
+      probabilityValue.textContent = `${percent}%`;
+      barFill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+      barFill.style.background = color;
+      riskBadge.textContent = result.risk_level;
+      riskBadge.style.background = color;
+      decisionValue.textContent = result.decision;
+
+      factorList.innerHTML = "";
+      if (result.top_risk_factors && result.top_risk_factors.length > 0) {
+        factors.style.display = "block";
+        result.top_risk_factors.forEach((factor) => {
+          const row = document.createElement("div");
+          row.className = "factor";
+          row.innerHTML = `<strong>${factor.feature}</strong><span>${factor.direction.replace("_", " ")}</span>`;
+          factorList.appendChild(row);
+        });
+      } else {
+        factors.style.display = "none";
+      }
+    }
+
+    function renderError(message) {
+      errorBox.style.display = "block";
+      errorBox.textContent = message;
+    }
+
+    async function scoreTransaction() {
+      statusText.textContent = "Scoring...";
+      errorBox.style.display = "none";
+      try {
+        const response = await fetch("/v1/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(collectPayload())
+        });
+
+        if (!response.ok) {
+          if (response.status === 503) {
+            renderError("The model is not trained yet. Run the training command to create model, threshold, and metrics artifacts, then restart the API.");
+          } else {
+            renderError("This transaction could not be scored. Check the values and try again.");
+          }
+          statusText.textContent = "";
+          return;
+        }
+
+        renderResult(await response.json());
+        statusText.textContent = "Updated";
+      } catch {
+        renderError("The API is unreachable. Start the FastAPI server and reload this demo.");
+        statusText.textContent = "";
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      scoreTransaction();
+    });
+
+    renderInputs();
+    renderSamples();
+    fillForm(samples[0].payload);
+    scoreTransaction();
+  </script>
+</body>
+</html>
